@@ -33,7 +33,7 @@ export function buildFrame(spec, dir, f) {
   const topD = shade(spec.top, -0.22);
   const pantsD = shade(spec.pants, -0.25);
   const skinD = shade(spec.skin, -0.16);
-  const hairL = shade(spec.hair, 0.25);
+  const hairL = spec.hairShine || shade(spec.hair, 0.25);
   const legCol = spec.skirt ? spec.skin : spec.pants;
   const hx = cx - b.headW / 2;
   const ey = headTop + b.headH - 4;
@@ -117,6 +117,10 @@ export function buildFrame(spec, dir, f) {
         P.set(hx, headTop + 4, spec.hair);
         P.set(hx + b.headW - 1, headTop + 4, spec.hair);
       }
+      if (spec.hairShine) {
+        P.set(hx + 1, headTop + 1, hairL);
+        P.set(hx + b.headW - 3, headTop + 2, hairL);
+      }
       if (spec.prop === 'notebook') {
         P.rect(cx + b.torsoW / 2 - 1, torsoTop + 4, 3, 3, PAL.white);
         P.rect(cx + b.torsoW / 2 - 1, torsoTop + 4, 3, 1, '#c94f4f');
@@ -138,6 +142,11 @@ export function buildFrame(spec, dir, f) {
       if (hs === 'bun') {
         P.rect(cx - 2, headTop - 2, 4, 3, spec.hair);
         P.set(cx - 1, headTop - 2, hairL);
+      }
+      if (spec.hairShine) {
+        P.set(hx + 2, headTop + 4, hairL);
+        P.set(hx + b.headW - 3, headTop + 3, hairL);
+        P.set(hx + b.headW - 3, headTop + 5, hairL);
       }
     }
   } else {
@@ -198,6 +207,10 @@ export function buildFrame(spec, dir, f) {
     if (hs === 'bun') {
       P.rect(hxS - 1, headTop, 3, 3, spec.hair);
       P.rect(hxS + 2, headTop - 1, 3, 1, spec.hair);
+    }
+    if (spec.hairShine) {
+      P.set(hxS, headTop + 1, hairL);
+      P.set(hxS + 1, headTop + 3, hairL);
     }
     if (spec.prop === 'notebook') {
       P.rect(cx + 1, torsoTop + 4, 3, 3, PAL.white);
@@ -322,7 +335,7 @@ export function buildPortrait(id) {
   const big = s.body === 'big';
   const skinD = shade(s.skin, -0.16);
   const hairD = shade(s.hair, -0.3);
-  const hairL = shade(s.hair, 0.25);
+  const hairL = s.hairShine || shade(s.hair, 0.25);
   const topD = shade(s.top, -0.22);
   const cx = 24;
   const cy = kid ? 25 : big ? 20 : 22;
@@ -394,6 +407,11 @@ export function buildPortrait(id) {
   if (hs !== 'buzz') {
     P.line(cx - 6, cy - ry + 3, cx - 1, cy - ry + 1, hairL);
     P.line(cx, cy - ry + 1, cx + 3, cy - ry + 2, hairL);
+  }
+  if (s.hairShine) {
+    P.line(cx + 5, cy - ry + 2, cx + 8, cy - ry + 4, hairL);
+    P.line(cx - 9, cy - ry + 5, cx - 7, cy - ry + 3, hairL);
+    if (hs === 'bun') P.rect(cx + 1, cy - ry - 3, 2, 1, hairL);
   }
 
   // gözler ve kaşlar

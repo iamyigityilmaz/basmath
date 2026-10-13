@@ -17,6 +17,7 @@ export const BODY = {
 /**
  * Parametrik karakterler. Ten, saç, saç modeli, üst ve alt kıyafet renkleri değişebilir.
  * hairStyle: short | long | bun | buzz
+ * hairShine: (isteğe bağlı) parlama rengi; siyah saç kontura karışmasın diye birkaç ek parlama pikseli çizilir
  */
 export const CHARS = {
   kartal: {
@@ -37,7 +38,7 @@ export const CHARS = {
   },
   yagmur: {
     name: 'Yağmur Alkanat', body: 'adult',
-    skin: '#f4c89d', hair: '#d9a441', hairStyle: 'bun',
+    skin: '#f4c89d', hair: '#211d27', hairShine: '#625c70', hairStyle: 'bun',
     top: '#9a5fd0', pants: '#6a3fa0', shoes: '#fff8ee', sleeve: 'long', skirt: 3, blush: true,
     bg: '#4aa3a0',
   },
