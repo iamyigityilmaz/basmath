@@ -1,0 +1,240 @@
+:root {
+  --bg: #1a1423;
+  --panel: #2b2140;
+  --panel-2: #3b2d59;
+  --line: #f4e9d8;
+  --ink: #fff8ee;
+  --accent: #ffcf4a;
+  --good: #58d66b;
+  --bad: #ef5a5a;
+  --u: 1px;
+  --f: 1.22px;
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--bg);
+  overflow: hidden;
+  overscroll-behavior: none;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+
+body {
+  position: fixed;
+  inset: 0;
+  height: 100dvh;
+  font-family: 'Jersey 15', 'Courier New', monospace;
+  font-variant-ligatures: none;
+  font-synthesis: none;
+  font-feature-settings: 'liga' 0, 'clig' 0;
+  color: var(--ink);
+}
+
+img {
+  -webkit-user-drag: none;
+  user-select: none;
+  pointer-events: none;
+  image-rendering: pixelated;
+}
+
+/* Oyun alanı: güvenli alanın içinde kalır (çentik / Dynamic Island) */
+#frame {
+  position: fixed;
+  top: env(safe-area-inset-top, 0px);
+  right: env(safe-area-inset-right, 0px);
+  bottom: env(safe-area-inset-bottom, 0px);
+  left: env(safe-area-inset-left, 0px);
+}
+
+#frame canvas {
+  display: block;
+  image-rendering: pixelated;
+}
+
+/* Joystick katmanı: tüm ekranı kaplar, canvas'ın üstünde, arayüzün altında */
+#touch {
+  position: fixed;
+  inset: 0;
+  z-index: 5;
+  touch-action: none;
+}
+
+.joy-base,
+.joy-knob {
+  position: fixed;
+  left: 0;
+  top: 0;
+  border-radius: 50%;
+  pointer-events: none;
+  display: none;
+}
+.joy-base {
+  width: 96px;
+  height: 96px;
+  margin: -48px 0 0 -48px;
+  background: rgba(255, 255, 255, 0.12);
+  border: 2px solid rgba(255, 255, 255, 0.45);
+}
+.joy-knob {
+  width: 44px;
+  height: 44px;
+  margin: -22px 0 0 -22px;
+  background: rgba(255, 207, 74, 0.75);
+  border: 2px solid rgba(255, 255, 255, 0.8);
+}
+.joy-on .joy-base,
+.joy-on .joy-knob {
+  display: block;
+}
+
+/* HTML arayüz katmanı: canvas'ın ölçeklenmiş sınırlarına hizalanır. 1 birim (--u) = 1 oyun pikseli */
+#ui {
+  position: absolute;
+  z-index: 10;
+  left: 0;
+  top: 0;
+  width: 384px;
+  height: 216px;
+  pointer-events: none;
+  overflow: hidden;
+  font-size: calc(var(--f) * 9);
+  line-height: 1.2;
+}
+
+#ui button {
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  touch-action: none;
+  min-width: 44px;
+  min-height: 44px;
+}
+
+.layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.layer.block {
+  pointer-events: auto;
+}
+
+/* ---- Genel panel / buton ---- */
+.panel {
+  background: var(--panel);
+  border: calc(var(--u) * 1.5) solid var(--line);
+  border-radius: calc(var(--u) * 3);
+  box-shadow: 0 calc(var(--u) * 2) 0 rgba(0, 0, 0, 0.45);
+}
+
+.btn {
+  pointer-events: auto;
+  background: var(--panel-2);
+  border: calc(var(--u) * 1.5) solid var(--line);
+  border-radius: calc(var(--u) * 3);
+  padding: calc(var(--u) * 2) calc(var(--u) * 8);
+  font-size: calc(var(--f) * 10);
+  box-shadow: 0 calc(var(--u) * 2) 0 rgba(0, 0, 0, 0.45);
+}
+.btn:active,
+.btn.pressed {
+  transform: translateY(calc(var(--u) * 1));
+  box-shadow: none;
+}
+.btn.focus,
+.btn:focus-visible {
+  outline: none;
+  border-color: var(--accent);
+  background: #55407f;
+}
+.btn[disabled] {
+  opacity: 0.35;
+  cursor: default;
+}
+
+/* ---- Telefonu yan çevir ---- */
+#rotate {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  font-size: 26px;
+  text-align: center;
+  padding: env(safe-area-inset-top, 0px) 16px env(safe-area-inset-bottom, 0px);
+}
+#rotate[hidden] {
+  display: none;
+}
+.rotate-phone {
+  width: 54px;
+  height: 96px;
+  border: 5px solid var(--line);
+  border-radius: 10px;
+  animation: rotate-hint 1.8s ease-in-out infinite;
+}
+@keyframes rotate-hint {
+  0%,
+  25% {
+    transform: rotate(0deg);
+  }
+  60%,
+  100% {
+    transform: rotate(-90deg);
+  }
+}
+
+/* ---- Debug ---- */
+.debug-fps {
+  position: absolute;
+  left: calc(var(--u) * 2);
+  bottom: calc(var(--u) * 2);
+  font-size: calc(var(--f) * 7);
+  color: #7dff9a;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 0 calc(var(--u) * 2);
+}
+.debug-toggle {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  transform: translateX(-50%);
+  pointer-events: auto;
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid #7dff9a;
+  color: #7dff9a !important;
+  font-size: calc(var(--f) * 7) !important;
+  padding: 0 calc(var(--u) * 6);
+}
+.debug-menu {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: auto;
+  display: grid;
+  grid-template-columns: repeat(3, auto);
+  gap: calc(var(--u) * 3);
+  padding: calc(var(--u) * 5);
+  z-index: 50;
+}
+.debug-menu .btn {
+  font-size: calc(var(--f) * 7);
+  padding: calc(var(--u) * 1) calc(var(--u) * 4);
+}
